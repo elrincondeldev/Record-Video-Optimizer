@@ -1,20 +1,21 @@
-import { useValueStore } from "../store/valueStore";
 import { useNavigate } from "react-router-dom";
 
 function Home() {
   const navigate = useNavigate();
 
-  const { setScript } = useValueStore((state) => ({
-    setScript: state.setScript,
-    script: state.script,
-  }));
-
-  const onHandleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onHandleSubmit = (e: any) => {
     e.preventDefault();
-    const message = (
-      e.currentTarget.elements.namedItem("message") as HTMLTextAreaElement
-    ).value;
-    setScript(message.split(/(?<=\.)\s*/));
+    const message = e.currentTarget.elements.namedItem("message").value;
+    const scriptArray = message
+      .split(/(?<=\.)\s*/)
+      .map((item: string, index: number) => ({
+        id: `${index + 1}`,
+        paragraph: item.trim(),
+        scene: "",
+      }));
+
+    localStorage.setItem("script", JSON.stringify(scriptArray));
+
     navigate("/record-optimizer");
   };
 

@@ -1,15 +1,38 @@
-import { useValueStore } from "../store/valueStore";
+import { useEffect, useState } from "react";
+
+interface RecordOptimizerProps {
+  id: string;
+  paragraph: string;
+  scene: string;
+}
 
 function RecordOptimizer() {
-  const { script } = useValueStore((state) => ({
-    script: state.script,
-  }));
+  const [script, setScript] = useState<RecordOptimizerProps[]>([]);
+
+  useEffect(() => {
+    const scriptFromLocalStorage = localStorage.getItem("script");
+    if (scriptFromLocalStorage) {
+      const scriptArray = JSON.parse(scriptFromLocalStorage);
+      setScript(scriptArray);
+    }
+  }, []);
 
   const recordTime = (paragraph: string) => {
-    const wps = 2.5;
+    const wps = 3.5;
     const words = paragraph.trim().split(/\s+/).length;
     const time = Math.ceil(words / wps);
     return time;
+  };
+
+  const handleSceneChange = (
+    index: number,
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const updatedScript = script.map((item, idx) =>
+      idx === index ? { ...item, scene: event.target.value } : item
+    );
+    setScript(updatedScript);
+    localStorage.setItem("script", JSON.stringify(updatedScript));
   };
 
   return (
@@ -28,22 +51,25 @@ function RecordOptimizer() {
               </thead>
               <tbody className="bg-white">
                 {script.map((paragraph, index) => (
-                  <tr className="text-gray-700">
+                  <tr key={index + 1} className="text-gray-700">
                     <td className="px-4 py-3 border">
-                      <p className="font-semibold text-black">{index + 1}</p>
+                      <p className="font-semibold text-black">{paragraph.id}</p>
                     </td>
                     <td className="px-4 py-3 text-ms font-semibold border">
-                      <p className="text-left">{paragraph}</p>
-                      <textarea
+                      <p className="text-left">{paragraph.paragraph}</p>
+                      <input
+                        type="text"
                         name=""
                         id=""
                         placeholder="Write the shot for your video."
-                        className="border rounded-md w-full h-[100px] p-3"
+                        value={paragraph.scene}
+                        onChange={(e) => handleSceneChange(index, e)}
+                        className="border rounded-md w-full p-3"
                       />
                     </td>
                     <td className="px-4 py-3 text-xs border">
                       <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-sm">
-                        {recordTime(paragraph)} s
+                        {recordTime(paragraph.paragraph)} s
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm border">
