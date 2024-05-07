@@ -21,7 +21,7 @@ function Home() {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <div className=" mx-auto p-8 bg-white rounded-md shadow-md">
+      <div className=" mx-auto p-8 bg-white rounded-md shadow-xl">
         <h2 className="text-2xl font-semibold mb-6">Record Video Optimizer</h2>
         <form action="#" method="POST" onSubmit={onHandleSubmit}>
           <div className="mb-6">

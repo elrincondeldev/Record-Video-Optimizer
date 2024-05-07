@@ -8,6 +8,7 @@ interface RecordOptimizerProps {
 
 function RecordOptimizer() {
   const [script, setScript] = useState<RecordOptimizerProps[]>([]);
+  const [totalTime, setTotalTime] = useState<number>(0);
 
   useEffect(() => {
     const scriptFromLocalStorage = localStorage.getItem("script");
@@ -24,6 +25,14 @@ function RecordOptimizer() {
     return time;
   };
 
+  const updateTotalTime = () => {
+    let total = 0;
+    script.forEach((paragraph) => {
+      total += recordTime(paragraph.paragraph);
+    });
+    setTotalTime(total);
+  };
+
   const handleSceneChange = (
     index: number,
     event: React.ChangeEvent<HTMLInputElement>
@@ -34,6 +43,10 @@ function RecordOptimizer() {
     setScript(updatedScript);
     localStorage.setItem("script", JSON.stringify(updatedScript));
   };
+
+  useEffect(() => {
+    updateTotalTime();
+  }, [script]);
 
   return (
     <>
@@ -77,6 +90,18 @@ function RecordOptimizer() {
                     </td>
                   </tr>
                 ))}
+                <tr className="text-gray-700">
+                  <td className="px-4 py-3 border"></td>
+                  <td className="px-4 py-3 text-ms font-semibold border">
+                    <p className="text-left">Total time</p>
+                  </td>
+                  <td className="px-4 py-3 text-xs border">
+                    <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-sm">
+                      {totalTime} s
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-sm border"></td>
+                </tr>
               </tbody>
             </table>
           </div>
